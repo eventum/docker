@@ -16,9 +16,9 @@ RUN set -xe \
 	&& tar --strip-components=1 -xzf eventum.tgz \
 	&& rm -f eventum.tgz \
 	&& apt-get update \
-	&& apt-get install -y libpng-dev \
-	&& docker-php-ext-install pdo pdo_mysql gd \
-	&& apt-get remove -y zlib1g-dev libpng12-dev zlib1g-dev \
+	&& apt-get install -y libpng-dev libmcrypt-dev \
+	&& docker-php-ext-install pdo pdo_mysql gd mcrypt \
+	&& apt-get remove -y zlib1g-dev libpng12-dev zlib1g-dev libmcrypt-dev \
 	&& apt-get clean \
 	&& rm -rfv /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& chmod -R og-rwX config var \
