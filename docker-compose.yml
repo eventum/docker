@@ -1,0 +1,7 @@
+version: "2"
+
+services:
+  eventum:
+    image: eventum
+
+# vim:ts=2:sw=2:et
