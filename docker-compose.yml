@@ -2,17 +2,28 @@ version: "2"
 
 volumes:
   code:
+  mysql:
 
 services:
   eventum:
     image: eventum
     volumes:
-     - code:/src/eventum
+      - code:/src/eventum
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:5.6
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MYSQL_DATABASE=eventum
 
   nginx:
     build: nginx
     ports:
-    - "8088:80"
+      - "8088:80"
     links:
       - eventum:fpm
     volumes:
