@@ -21,4 +21,8 @@ RUN set -xe \
 	&& apt-get remove -y zlib1g-dev libpng12-dev zlib1g-dev \
 	&& apt-get clean \
 	&& rm -rfv /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+	&& chmod -R og-rwX config var \
+	&& chown -R www-data: config var \
 	&& du -sh
+
+USER www-data
