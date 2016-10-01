@@ -1,7 +1,21 @@
 version: "2"
 
+volumes:
+  code:
+
 services:
   eventum:
     image: eventum
+    volumes:
+     - code:/src/eventum
+
+  nginx:
+    build: nginx
+    ports:
+    - "8088:80"
+    links:
+      - eventum:fpm
+    volumes:
+      - code:/src/eventum:ro
 
 # vim:ts=2:sw=2:et
