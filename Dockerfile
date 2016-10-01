@@ -15,4 +15,10 @@ RUN set -xe \
 	&& echo "$EVENTUM_MD5 *eventum.tgz" | md5sum -c - \
 	&& tar --strip-components=1 -xzf eventum.tgz \
 	&& rm -f eventum.tgz \
+	&& apt-get update \
+	&& apt-get install -y libpng-dev \
+	&& docker-php-ext-install pdo pdo_mysql gd \
+	&& apt-get remove -y zlib1g-dev libpng12-dev zlib1g-dev \
+	&& apt-get clean \
+	&& rm -rfv /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& du -sh
