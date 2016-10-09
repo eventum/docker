@@ -22,6 +22,7 @@ RUN set -xe \
 
 # step2: install dependencies
 RUN set -xe \
+	&& ln -s /usr/local/bin/php /usr/bin  \
 	&& apt-get update \
 	&& apt-get install -y libpng-dev libmcrypt-dev \
 	&& docker-php-ext-install pdo pdo_mysql gd mcrypt \
