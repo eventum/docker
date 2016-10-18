@@ -24,7 +24,7 @@ RUN set -xe \
 RUN set -xe \
 	&& ln -s /usr/local/bin/php /usr/bin  \
 	&& apt-get update \
-	&& apt-get install -y libpng-dev libmcrypt-dev \
+	&& apt-get install -y --no-install-recommends libpng-dev libmcrypt-dev \
 	&& docker-php-ext-install pdo pdo_mysql gd mcrypt \
 	&& apt-get remove -y zlib1g-dev libpng12-dev zlib1g-dev libmcrypt-dev \
 	&& apt-get clean \
