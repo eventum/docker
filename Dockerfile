@@ -8,7 +8,7 @@ FROM php:5.6-fpm
 ARG EVENTUM_VERSION=3.1.4
 ARG EVENTUM_MD5=3dd1a7d3a6a496bbd57f3e11d2fcb6f1
 
-WORKDIR /src/eventum
+WORKDIR /usr/src/eventum
 
 # step1: install eventum code
 RUN set -xe \
