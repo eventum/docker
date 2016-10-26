@@ -30,6 +30,5 @@ services:
       - eventum:fpm
     volumes:
       - code-3.1.4:/src/eventum:ro
-      - config:/src/eventum/config:ro
 
 # vim:ts=2:sw=2:et
