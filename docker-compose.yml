@@ -1,15 +1,16 @@
-version: "2"
+version: '2.1'
 
 volumes:
-  code-3.3.3:
   config:
   mysql:
+  code:
+    name: eventum-3.3.3
 
 services:
   eventum:
     image: eventum/eventum:3.3.3
     volumes:
-      - code-3.3.3:/usr/src/eventum
+      - code:/usr/src/eventum
       - config:/usr/src/eventum/config
     links:
       - mysql
@@ -29,6 +30,6 @@ services:
     links:
       - eventum:fpm
     volumes:
-      - code-3.3.3:/usr/src/eventum:ro
+      - code:/usr/src/eventum:ro
 
 # vim:ts=2:sw=2:et
