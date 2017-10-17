@@ -29,7 +29,7 @@ docker-compose exec eventum bin/upgrade.php
 ```
 docker volume ls
 DRIVER              VOLUME NAME
-local               eventum_code-3.3.2
+local               eventum_code-3.3.3
 local               eventum_config
 local               eventum_mysql
 ```
