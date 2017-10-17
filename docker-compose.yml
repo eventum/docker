@@ -6,10 +6,16 @@ volumes:
   mysql:
 
 services:
-  eventum:
-    image: eventum/eventum:3.3.2
+  code:
+    image: eventum/code:3.3.2
     volumes:
       - code-3.3.2:/usr/src/eventum
+
+  runtime:
+    image: eventum/runtime:3.3.2
+    volumes_from:
+      - code
+    volumes:
       - config:/usr/src/eventum/config
     links:
       - mysql
@@ -27,8 +33,8 @@ services:
     ports:
       - "8088:80"
     links:
-      - eventum:fpm
-    volumes:
-      - code-3.3.2:/usr/src/eventum:ro
+      - runtime:fpm
+    volumes_from:
+      - code
 
 # vim:ts=2:sw=2:et
