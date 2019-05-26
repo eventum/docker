@@ -3,7 +3,7 @@
 # https://github.com/eventum/eventum
 #
 
-FROM php:7.1-fpm-alpine AS base
+FROM phpearth/php:7.1-nginx AS base
 
 FROM base AS source
 RUN apk add --no-cache curl
@@ -26,6 +26,9 @@ RUN set -x \
 
 # build runtime image
 FROM base
+RUN apk add --no-cache php7.1-gd php7.1-intl php7.1-pdo_mysql
+# update to use app root; required to change config as expose only subdir
+RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
+
 WORKDIR /app
 COPY --from=source /app ./
-USER www-data
