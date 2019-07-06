@@ -45,11 +45,17 @@ RUN set -x \
 
 # build runtime image
 FROM base
-RUN apk add --no-cache php$PHP_VERSION-gd php$PHP_VERSION-intl php$PHP_VERSION-pdo_mysql
+WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
 # update to use app root; required to change config as expose only subdir
 RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
 
-WORKDIR /app
+RUN apk add --no-cache \
+	php$PHP_VERSION-gd \
+	php$PHP_VERSION-intl \
+	php$PHP_VERSION-ldap \
+	php$PHP_VERSION-pdo_mysql \
+	&& exit 0
+
 COPY --from=source /app ./
 COPY --from=source /stage /
