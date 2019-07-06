@@ -24,6 +24,9 @@ RUN set -x \
 	&& chown -R www-data: config var \
 	&& du -sh
 
+COPY php.ini /php.ini
+RUN chmod 644 /php.ini
+
 # build runtime image
 FROM base
 RUN apk add --no-cache php7.1-gd php7.1-intl php7.1-pdo_mysql
@@ -31,4 +34,5 @@ RUN apk add --no-cache php7.1-gd php7.1-intl php7.1-pdo_mysql
 RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
 
 WORKDIR /app
+COPY --from=source /php.ini /etc/php/7.1/php.ini
 COPY --from=source /app ./

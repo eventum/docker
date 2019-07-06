@@ -3,6 +3,8 @@ version: '2.1'
 services:
   eventum:
     build: .
+    volumes:
+      - ./php.ini:/etc/php/7.1/php.ini
     ports:
       - "8088:80"
 
