@@ -7,6 +7,11 @@ services:
       - ./php.ini:/etc/php/7.1/php.ini
     ports:
       - "8088:80"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
 
   mysql:
     image: percona:5.7
@@ -15,6 +20,11 @@ services:
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
       - MYSQL_DATABASE=eventum
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
 
 volumes:
   mysql:
