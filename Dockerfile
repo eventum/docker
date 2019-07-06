@@ -19,10 +19,6 @@ RUN echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 
 WORKDIR /app
 RUN tar --strip-components=1 -xf /source/eventum.tar.xz
-RUN set -x \
-	&& chmod -R og-rwX config var \
-	&& chown -R www-data: config var \
-	&& du -sh
 
 COPY php.ini /php.ini
 RUN chmod 644 /php.ini
@@ -36,3 +32,7 @@ RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.co
 WORKDIR /app
 COPY --from=source /php.ini /etc/php/7.1/php.ini
 COPY --from=source /app ./
+RUN set -x \
+	&& chmod -R og-rwX config var \
+	&& chown -R www-data: config var \
+	&& du -sh
