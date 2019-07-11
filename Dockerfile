@@ -20,18 +20,21 @@ RUN echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 WORKDIR /app
 RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 
-COPY php.ini /php.ini
-RUN chmod 644 /php.ini
+WORKDIR /stage
+COPY php.ini ./etc/php/7.1/php.ini
+COPY bin/entrypoint.sh ./eventum
+RUN chmod -R a+rX .
 
 # build runtime image
 FROM base
 RUN apk add --no-cache php7.1-gd php7.1-intl php7.1-pdo_mysql
+ENTRYPOINT [ "/eventum" ]
 # update to use app root; required to change config as expose only subdir
 RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
 
 WORKDIR /app
-COPY --from=source /php.ini /etc/php/7.1/php.ini
 COPY --from=source /app ./
+COPY --from=source /stage /
 RUN set -x \
 	&& chmod -R og-rwX config var \
 	&& chown -R www-data: config var \
