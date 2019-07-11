@@ -2,9 +2,9 @@ version: '2.1'
 
 services:
   eventum:
-    build: .
+    image: eventum/eventum:3.7.2
     volumes:
-      - ./php.ini:/etc/php/7.1/php.ini
+      - ./config:/app/config
     ports:
       - "8088:80"
     logging:
@@ -28,5 +28,7 @@ services:
 
 volumes:
   mysql:
+    labels:
+      - "com.eventum.description=Eventum MySQL Database Volume"
 
 # vim:ts=2:sw=2:et
