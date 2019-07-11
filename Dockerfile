@@ -3,7 +3,16 @@
 # https://github.com/eventum/eventum
 #
 
-FROM phpearth/php:7.1-nginx AS base
+# base php version
+ARG PHP_VERSION=7.1
+FROM phpearth/php:$PHP_VERSION-nginx AS base
+
+ARG PHP_VERSION=7.1
+ENV PHP_VERSION $PHP_VERSION
+
+# temporarily until applied upstream: https://github.com/phpearth/docker-php/pull/34
+# PHP_INI_DIR to be symmetrical with official php docker image
+ENV PHP_INI_DIR /etc/php/$PHP_VERSION
 
 FROM base AS source
 RUN apk add --no-cache curl
@@ -21,13 +30,13 @@ WORKDIR /app
 RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 
 WORKDIR /stage
-COPY php.ini ./etc/php/7.1/php.ini
+COPY php.ini ./$PHP_INI_DIR/php.ini
 COPY bin/entrypoint.sh ./eventum
 RUN chmod -R a+rX .
 
 # build runtime image
 FROM base
-RUN apk add --no-cache php7.1-gd php7.1-intl php7.1-pdo_mysql
+RUN apk add --no-cache php$PHP_VERSION-gd php$PHP_VERSION-intl php$PHP_VERSION-pdo_mysql
 ENTRYPOINT [ "/eventum" ]
 # update to use app root; required to change config as expose only subdir
 RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
