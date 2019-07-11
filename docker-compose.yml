@@ -28,5 +28,7 @@ services:
 
 volumes:
   mysql:
+    labels:
+      - "com.eventum.description=Eventum MySQL Database Volume"
 
 # vim:ts=2:sw=2:et
