@@ -3,6 +3,8 @@ version: '2.1'
 services:
   eventum:
     image: eventum/eventum:3.7.2
+    volumes:
+      - ./config:/app/config
     ports:
       - "8088:80"
     logging:

@@ -1,3 +1,6 @@
-*~
+# dirs
 /.idea/
+/config/
+# files
+*~
 /docker-compose.override.yml

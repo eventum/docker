@@ -32,7 +32,16 @@ RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 WORKDIR /stage
 COPY php.ini ./$PHP_INI_DIR/php.ini
 COPY bin/entrypoint.sh ./eventum
-RUN chmod -R a+rX .
+
+# config skeleton for initial setup and upgrades
+RUN mv /app/config ./config
+
+RUN set -x \
+	&& install -d /app/config \
+	&& chmod -R a+rX /app \
+	&& chmod -R og-rwX ./config /app/var \
+	&& chown -R www-data: ./config /app/var \
+	&& du -sh /app
 
 # build runtime image
 FROM base
@@ -44,7 +53,3 @@ RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.co
 WORKDIR /app
 COPY --from=source /app ./
 COPY --from=source /stage /
-RUN set -x \
-	&& chmod -R og-rwX config var \
-	&& chown -R www-data: config var \
-	&& du -sh
