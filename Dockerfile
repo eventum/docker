@@ -38,9 +38,10 @@ RUN mv /app/config ./config
 
 RUN set -x \
 	&& install -d /app/config \
-	&& chmod -R a+rX /app \
-	&& chmod -R og-rwX ./config /app/var \
-	&& chown -R www-data: ./config /app/var \
+	&& chmod -R og-w /app \
+	&& chmod -R og-w,o-rwX ./config /app/var/* \
+	&& chown -R www-data:www-data ./config /app/var/* \
+	&& rm -vf /app/var/log/*.log \
 	&& du -sh /app
 
 # build runtime image
