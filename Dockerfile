@@ -36,6 +36,8 @@ COPY bin/entrypoint.sh ./eventum
 
 # config skeleton for initial setup and upgrades
 RUN mv /app/config ./config
+# empty setup file indicates that need to run setup
+RUN find config -size 0 -delete
 
 RUN set -x \
 	&& install -d /app/config \
