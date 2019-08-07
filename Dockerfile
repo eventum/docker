@@ -31,6 +31,7 @@ RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 
 WORKDIR /stage
 COPY php.ini ./$PHP_INI_DIR/php.ini
+COPY nginx.conf ./etc/nginx/conf.d/default.conf
 COPY bin/entrypoint.sh ./eventum
 
 # config skeleton for initial setup and upgrades
@@ -48,8 +49,6 @@ RUN set -x \
 FROM base
 WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
-# update to use app root; required to change config as expose only subdir
-RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
 
 RUN apk add --no-cache \
 	php$PHP_VERSION-gd \
