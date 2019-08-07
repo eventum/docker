@@ -19,10 +19,10 @@ RUN apk add --no-cache curl
 
 # download and unpack code
 WORKDIR /source
-ARG VERSION=3.7.2
-RUN curl -fLSs https://github.com/eventum/eventum/releases/download/v$VERSION/eventum-$VERSION.tar.xz -o eventum.tar.xz
+ARG VERSION=3.7.4
+RUN curl -fLS https://github.com/eventum/eventum/releases/download/v$VERSION/eventum-$VERSION.tar.xz -o eventum.tar.xz
 
-ARG CHECKSUM=adabf6d9f493c44e77a501755857e223ff8a5eec735ef2312e7e81fed48c4758
+ARG CHECKSUM=76f85ef2692e253c1a0823fd57c06ea204c46632e542cb1e822438369543d29a
 RUN sha256sum eventum.tar.xz
 RUN echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 
@@ -31,10 +31,13 @@ RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 
 WORKDIR /stage
 COPY php.ini ./$PHP_INI_DIR/php.ini
+COPY nginx.conf ./etc/nginx/conf.d/default.conf
 COPY bin/entrypoint.sh ./eventum
 
 # config skeleton for initial setup and upgrades
 RUN mv /app/config ./config
+# empty setup file indicates that need to run setup
+RUN find config -size 0 -delete
 
 RUN set -x \
 	&& install -d /app/config \
@@ -48,8 +51,8 @@ RUN set -x \
 FROM base
 WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
-# update to use app root; required to change config as expose only subdir
-RUN sed -i -e '/root/ s;/var/www/html;/app/htdocs;' /etc/nginx/conf.d/default.conf
+# Somewhy the value set in php.ini has no effect for fpm
+RUN echo 'php_admin_flag[display_errors] = off' >> /etc/php/$PHP_VERSION/php-fpm.d/www.conf
 
 RUN apk add --no-cache \
 	php$PHP_VERSION-gd \
