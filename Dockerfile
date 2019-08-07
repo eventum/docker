@@ -49,6 +49,8 @@ RUN set -x \
 FROM base
 WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
+# Somewhy the value set in php.ini has no effect for fpm
+RUN echo 'php_admin_flag[display_errors] = off' >> /etc/php/$PHP_VERSION/php-fpm.d/www.conf
 
 RUN apk add --no-cache \
 	php$PHP_VERSION-gd \
