@@ -10,6 +10,7 @@ services:
       - ./log/nginx:/var/log/nginx
       - ./log/fpm:/var/log/php/7.1
       - ./lock:/app/var/lock
+      - ./session:/var/run/php/session
       - ./storage:/app/var/storage
     ports:
       - "8088:80"
