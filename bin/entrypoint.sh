@@ -19,7 +19,7 @@ bootstrap() {
 	while read path; do
 		file=$(readlink -f "./${path}")
 		test -f "$file" && continue
-		cp -vp "$path" "$file"
+		install -v -o www-data -g www-data -p -m 644 "$path" "$file"
 	done < $tmp
 
 	rm -f $tmp
