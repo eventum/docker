@@ -2,9 +2,16 @@ version: '2.1'
 
 services:
   eventum:
-    image: eventum/eventum:3.7.4
+    image: eventum/eventum:3.8.0
     volumes:
       - ./config:/app/config
+      - ./cache:/app/var/cache
+      - ./log:/app/var/log
+      - ./log/nginx:/var/log/nginx
+      - ./log/fpm:/var/log/php/7.1
+      - ./lock:/app/var/lock
+      - ./session:/app/var/session
+      - ./storage:/app/var/storage
     ports:
       - "8088:80"
     logging:

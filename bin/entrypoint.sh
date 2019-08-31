@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 
-bootstrap() {
+
+copy_config() {
 	local tmp path file
 
 	tmp=$(mktemp)
@@ -19,10 +20,23 @@ bootstrap() {
 	while read path; do
 		file=$(readlink -f "./${path}")
 		test -f "$file" && continue
-		cp -vp "$path" "$file"
+		install -v -o www-data -g www-data -p -m 644 "$path" "$file"
 	done < $tmp
 
 	rm -f $tmp
+}
+
+fix_permissions() {
+	chown www-data:www-data var/cache
+	chown www-data:www-data var/lock
+	chown www-data:www-data var/log
+	chown www-data:www-data var/session
+	chown www-data:www-data var/storage
+}
+
+bootstrap() {
+	copy_config
+	fix_permissions
 }
 
 upgrade() {

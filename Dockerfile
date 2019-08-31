@@ -19,10 +19,10 @@ RUN apk add --no-cache curl
 
 # download and unpack code
 WORKDIR /source
-ARG VERSION=3.7.4
+ARG VERSION=3.8.0
 RUN curl -fLS https://github.com/eventum/eventum/releases/download/v$VERSION/eventum-$VERSION.tar.xz -o eventum.tar.xz
 
-ARG CHECKSUM=76f85ef2692e253c1a0823fd57c06ea204c46632e542cb1e822438369543d29a
+ARG CHECKSUM=0dcd8c76679e80fbb74f970cec86a42e523dce4d99d99d590a872a8cbcaa746e
 RUN sha256sum eventum.tar.xz
 RUN echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 
@@ -34,17 +34,20 @@ COPY php.ini ./$PHP_INI_DIR/php.ini
 COPY nginx.conf ./etc/nginx/conf.d/default.conf
 COPY bin/entrypoint.sh ./eventum
 
-# config skeleton for initial setup and upgrades
-RUN mv /app/config ./config
-# empty setup file indicates that need to run setup
-RUN find config -size 0 -delete
-
+WORKDIR /app
 RUN set -x \
-	&& install -d /app/config \
-	&& chmod -R og-w /app \
-	&& chmod -R og-w,o-rwX ./config /app/var/* \
-	&& chown -R www-data:www-data ./config /app/var/* \
-	&& rm -vf /app/var/log/*.log \
+	# not required runtime
+	&& rm -r Makefile localization/*.po localization/eventum.pot localization/Makefile localization/LINGUAS.php \
+	&& rm -vf var/log/*.log \
+	# fixup permissions
+	&& install -d config var/session \
+	&& chmod -R og-w,o-rwX config var \
+	# empty setup file indicates that need to run setup
+	&& find config -size 0 -delete \
+	# config skeleton for initial setup and upgrades
+	&& install -d /stage/config \
+	&& mv config/* /stage/config \
+	&& chown -R www-data:www-data config var \
 	&& du -sh /app
 
 # build runtime image
@@ -56,6 +59,7 @@ RUN echo 'php_admin_flag[display_errors] = off' >> /etc/php/$PHP_VERSION/php-fpm
 
 RUN apk add --no-cache \
 	php$PHP_VERSION-gd \
+	php$PHP_VERSION-gettext \
 	php$PHP_VERSION-intl \
 	php$PHP_VERSION-ldap \
 	php$PHP_VERSION-pdo_mysql \
