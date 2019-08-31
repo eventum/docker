@@ -19,10 +19,10 @@ RUN apk add --no-cache curl
 
 # download and unpack code
 WORKDIR /source
-ARG VERSION=3.7.4
+ARG VERSION=3.8.0
 RUN curl -fLS https://github.com/eventum/eventum/releases/download/v$VERSION/eventum-$VERSION.tar.xz -o eventum.tar.xz
 
-ARG CHECKSUM=76f85ef2692e253c1a0823fd57c06ea204c46632e542cb1e822438369543d29a
+ARG CHECKSUM=0dcd8c76679e80fbb74f970cec86a42e523dce4d99d99d590a872a8cbcaa746e
 RUN sha256sum eventum.tar.xz
 RUN echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 
@@ -56,6 +56,7 @@ RUN echo 'php_admin_flag[display_errors] = off' >> /etc/php/$PHP_VERSION/php-fpm
 
 RUN apk add --no-cache \
 	php$PHP_VERSION-gd \
+	php$PHP_VERSION-gettext \
 	php$PHP_VERSION-intl \
 	php$PHP_VERSION-ldap \
 	php$PHP_VERSION-pdo_mysql \
