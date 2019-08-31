@@ -40,7 +40,7 @@ RUN mv /app/config ./config
 RUN find config -size 0 -delete
 
 RUN set -x \
-	&& install -d /app/config \
+	&& install -d /app/config /app/var/session \
 	&& chmod -R og-w /app \
 	&& chmod -R og-w,o-rwX ./config /app/var/* \
 	&& chown -R www-data:www-data ./config /app/var/* \
