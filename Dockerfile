@@ -34,17 +34,20 @@ COPY php.ini ./$PHP_INI_DIR/php.ini
 COPY nginx.conf ./etc/nginx/conf.d/default.conf
 COPY bin/entrypoint.sh ./eventum
 
-# config skeleton for initial setup and upgrades
-RUN mv /app/config ./config
-# empty setup file indicates that need to run setup
-RUN find config -size 0 -delete
-
+WORKDIR /app
 RUN set -x \
-	&& install -d /app/config /app/var/session \
-	&& chmod -R og-w /app \
-	&& chmod -R og-w,o-rwX ./config /app/var/* \
-	&& chown -R www-data:www-data ./config /app/var/* \
-	&& rm -vf /app/var/log/*.log \
+	# not required runtime
+	&& rm -r Makefile localization/*.po localization/eventum.pot localization/Makefile localization/LINGUAS.php \
+	&& rm -vf var/log/*.log \
+	# fixup permissions
+	&& install -d config var/session \
+	&& chmod -R og-w,o-rwX config var \
+	# empty setup file indicates that need to run setup
+	&& find config -size 0 -delete \
+	# config skeleton for initial setup and upgrades
+	&& install -d /stage/config \
+	&& mv config/* /stage/config \
+	&& chown -R www-data:www-data config var \
 	&& du -sh /app
 
 # build runtime image
