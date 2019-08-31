@@ -30,6 +30,7 @@ fix_permissions() {
 	chown www-data:www-data var/cache
 	chown www-data:www-data var/lock
 	chown www-data:www-data var/log
+	chown www-data:www-data var/storage
 }
 
 bootstrap() {
