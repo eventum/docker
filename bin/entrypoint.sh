@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 
-bootstrap() {
+
+copy_config() {
 	local tmp path file
 
 	tmp=$(mktemp)
@@ -23,6 +24,17 @@ bootstrap() {
 	done < $tmp
 
 	rm -f $tmp
+}
+
+fix_permissions() {
+	chown www-data:www-data var/cache
+	chown www-data:www-data var/lock
+	chown www-data:www-data var/log
+}
+
+bootstrap() {
+	copy_config
+	fix_permissions
 }
 
 upgrade() {
