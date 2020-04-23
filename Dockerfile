@@ -47,7 +47,9 @@ RUN set -x \
 	&& install -d /stage/config \
 	&& mv config/* /stage/config \
 	&& chown -R www-data:www-data config var \
-	&& du -sh /app
+	# add vendor as separate docker layer
+	&& mv vendor / \
+	&& du -sh /app /vendor
 
 # build runtime image
 FROM base
@@ -64,5 +66,6 @@ RUN apk add --no-cache \
 	php$PHP_VERSION-pdo_mysql \
 	&& exit 0
 
+COPY --from=source /vendor ./vendor/
 COPY --from=source /app ./
 COPY --from=source /stage /
