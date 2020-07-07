@@ -4,10 +4,10 @@
 #
 
 # base php version
-ARG PHP_VERSION=7.1
+ARG PHP_VERSION=7.2
 FROM phpearth/php:$PHP_VERSION-nginx AS base
 
-ARG PHP_VERSION=7.1
+ARG PHP_VERSION=7.2
 ENV PHP_VERSION $PHP_VERSION
 
 # temporarily until applied upstream: https://github.com/phpearth/docker-php/pull/34
@@ -19,10 +19,10 @@ RUN apk add --no-cache curl
 
 # download and unpack code
 WORKDIR /source
-ARG VERSION=3.8.16
+ARG VERSION=3.9.0
 RUN curl -fLS https://github.com/eventum/eventum/releases/download/v$VERSION/eventum-$VERSION.tar.xz -o eventum.tar.xz
 
-ARG CHECKSUM=f2e7c0d92efaffef67d1cb045cf034c01d11cf536e50402d02457b1909c93bce
+ARG CHECKSUM=d26962a1940ebb0191b43c78677f6a79818ae98ce69168ab708414b98fc39fff
 RUN sha256sum eventum.tar.xz && echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 
 WORKDIR /app
