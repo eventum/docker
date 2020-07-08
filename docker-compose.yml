@@ -5,13 +5,13 @@ services:
     image: eventum/eventum:3.9.0
     volumes:
       - ./config:/app/config
-      - ./cache:/app/var/cache
-      - ./log:/app/var/log
-      - ./log/nginx:/var/log/nginx
-      - ./log/fpm:/var/log/php/7.2
-      - ./lock:/app/var/lock
-      - ./session:/app/var/session
-      - ./storage:/app/var/storage
+      - ./var/cache:/app/var/cache
+      - ./var/log:/app/var/log
+      - ./var/log/nginx:/var/log/nginx
+      - ./var/log/fpm:/var/log/php/7.2
+      - ./var/lock:/app/var/lock
+      - ./var/session:/app/var/session
+      - ./var/storage:/app/var/storage
     environment:
       - APP_ENV=prod
     ports:

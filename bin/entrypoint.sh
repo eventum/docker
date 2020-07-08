@@ -27,6 +27,7 @@ copy_config() {
 }
 
 fix_permissions() {
+	chown www-data:www-data var
 	chown www-data:www-data var/cache
 	chown www-data:www-data var/lock
 	chown www-data:www-data var/log
