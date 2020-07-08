@@ -12,6 +12,8 @@ services:
       - ./lock:/app/var/lock
       - ./session:/app/var/session
       - ./storage:/app/var/storage
+    environment:
+      - APP_ENV=prod
     ports:
       - "8088:80"
     logging:
