@@ -1,10 +1,6 @@
 # dirs
 /.idea/
-/cache/
-/config/
-/log/
-/session/
-/storage/
+/var/
 # files
 *~
 /docker-compose.override.yml
