@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
   eventum:
-    image: eventum/eventum:3.9.0
+    image: eventum/eventum:3.9.1
     volumes:
       - ./config:/app/config
       - ./var/cache:/app/var/cache
