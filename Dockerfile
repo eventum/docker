@@ -31,6 +31,7 @@ RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 WORKDIR /stage
 COPY php.ini ./$PHP_INI_DIR/php.ini
 COPY nginx.conf ./etc/nginx/conf.d/default.conf
+COPY php-fpm.conf ./etc/php/$PHP_VERSION/www.conf.extra
 COPY bin/entrypoint.sh ./eventum
 
 WORKDIR /app
@@ -55,8 +56,6 @@ RUN set -x \
 FROM base
 WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
-# Somewhy the value set in php.ini has no effect for fpm
-RUN echo 'php_admin_flag[display_errors] = off' >> /etc/php/$PHP_VERSION/php-fpm.d/www.conf
 
 RUN apk add --no-cache \
 	php$PHP_VERSION-gd \
@@ -66,6 +65,8 @@ RUN apk add --no-cache \
 	php$PHP_VERSION-pdo_mysql \
 	&& exit 0
 
+COPY --from=source /stage /
+RUN cat /etc/php/$PHP_VERSION/www.conf.extra >> /etc/php/$PHP_VERSION/php-fpm.d/www.conf
+
 COPY --from=source /vendor ./vendor/
 COPY --from=source /app ./
-COPY --from=source /stage /
