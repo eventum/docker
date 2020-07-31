@@ -1,6 +1,9 @@
 #!/bin/sh
 set -eu
 
+sh_install() {
+	install -o www-data -g www-data "$@"
+}
 
 copy_config() {
 	local tmp path file
@@ -12,7 +15,7 @@ copy_config() {
 	while read path; do
 		path=$(readlink -f "./${path}")
 		test -d "$path" && continue
-		install -v -o www-data -g www-data -d "$path"
+		sh_install -v -d "$path"
 	done < $tmp
 
 	# copy new files
@@ -20,19 +23,19 @@ copy_config() {
 	while read path; do
 		file=$(readlink -f "./${path}")
 		test -f "$file" && continue
-		install -v -o www-data -g www-data -p -m 644 "$path" "$file"
+		sh_install -v -p -m 644 "$path" "$file"
 	done < $tmp
 
 	rm -f $tmp
 }
 
 fix_permissions() {
-	chown www-data:www-data var
-	chown www-data:www-data var/cache
-	chown www-data:www-data var/lock
-	chown www-data:www-data var/log
-	chown www-data:www-data var/session
-	chown www-data:www-data var/storage
+	sh_install -d var
+	sh_install -d var/cache
+	sh_install -d var/lock
+	sh_install -d var/log
+	sh_install -d var/session
+	sh_install -d var/storage
 }
 
 bootstrap() {
