@@ -50,7 +50,6 @@ upgrade() {
 	bin/upgrade.php
 }
 
-cd /app
 bootstrap
 upgrade || :
 
