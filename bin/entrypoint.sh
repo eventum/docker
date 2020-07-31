@@ -1,8 +1,11 @@
 #!/bin/sh
 set -eu
 
+: ${APP_USER:=www-data}
+: ${APP_GROUP:=www-data}
+
 sh_install() {
-	install -o www-data -g www-data "$@"
+	install -o $APP_USER -g $APP_GROUP "$@"
 }
 
 copy_config() {
