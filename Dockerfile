@@ -58,6 +58,7 @@ WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
 
 RUN apk add --no-cache \
+	setpriv \
 	php$PHP_VERSION-gd \
 	php$PHP_VERSION-gettext \
 	php$PHP_VERSION-intl \

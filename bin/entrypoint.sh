@@ -8,6 +8,19 @@ sh_install() {
 	install -o $APP_USER -g $APP_GROUP "$@"
 }
 
+# https://github.com/karelzak/util-linux/issues/325
+# Run command as app user
+app_user() {
+	local uid=$(id -u $APP_USER)
+	local gid=$(id -g $APP_GROUP)
+
+	if [ "$(id -u)" = "0" ]; then
+		setpriv --euid "$uid" --ruid "$uid" --clear-groups --egid "$gid" --rgid "$gid" -- "$@"
+	else
+		"$@"
+	fi
+}
+
 copy_config() {
 	local tmp path file
 
@@ -50,7 +63,7 @@ upgrade() {
 	# skip upgrade on new install
 	test -s config/setup.php || return 0
 
-	bin/upgrade.php
+	app_user bin/upgrade.php
 }
 
 bootstrap
