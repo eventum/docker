@@ -19,10 +19,10 @@ RUN apk add --no-cache curl
 
 # download and unpack code
 WORKDIR /source
-ARG VERSION=3.9.6
+ARG VERSION=3.9.7
 RUN curl -fLS https://github.com/eventum/eventum/releases/download/v$VERSION/eventum-$VERSION.tar.xz -o eventum.tar.xz
 
-ARG CHECKSUM=0cd5eadab5f02957b855fa4c54f3e1e13767eaa1c9bd9d9100faa9e8523d23a4
+ARG CHECKSUM=72f84509a5f9e1f92a9abe0c9085a307dba07d221b994850ee07736f78fcf694
 RUN sha256sum eventum.tar.xz && echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
 
 WORKDIR /app
