@@ -5,7 +5,7 @@
 Start the services using docker-compose
 
 ```
-docker-composer up -d
+docker-compose up -d
 ```
 
 Open eventum: http://eventum.127.0.0.1.xip.io:8088/list.php
