@@ -43,7 +43,7 @@ RUN set -x \
 	&& install -d config var/session \
 	&& chmod -R og-w,o-rwX config var \
 	# empty setup file indicates that need to run setup
-	&& find config -size 0 -delete \
+	&& find config -type f -size 0 -delete \
 	# config skeleton for initial setup and upgrades
 	&& install -d /stage/config \
 	&& mv config/* /stage/config \
