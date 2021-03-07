@@ -60,9 +60,6 @@ bootstrap() {
 }
 
 upgrade() {
-	# skip upgrade on new install
-	test -s config/setup.php || return 0
-
 	app_user bin/upgrade.php
 }
 
