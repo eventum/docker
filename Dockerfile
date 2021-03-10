@@ -34,6 +34,8 @@ COPY nginx.conf ./etc/nginx/conf.d/default.conf
 COPY php-fpm.conf ./etc/php/$PHP_VERSION/www.conf.extra
 COPY bin/entrypoint.sh ./eventum
 
+ARG DATE=2021-03-10
+ARG TIME=19:33:10
 WORKDIR /app
 RUN set -x \
 	# not required runtime
@@ -48,6 +50,12 @@ RUN set -x \
 	&& install -d /stage/config \
 	&& mv config/* /stage/config \
 	&& chown -R www-data:www-data config var \
+	# make build reproducible by using fixed timestamp
+	# we timestamp files in eventum tarball, but not dirs
+	&& find -type d | xargs touch -d "$DATE" -t "$TIME" \
+	# common timestamp for all files in vendor until composer supports that itself
+	# https://github.com/composer/composer/issues/9768
+	&& find vendor -type f | xargs touch -d "$DATE" -t "$TIME" \
 	# add vendor as separate docker layer
 	&& mv vendor / \
 	&& du -sh /app /vendor
@@ -66,8 +74,8 @@ RUN apk add --no-cache \
 	php$PHP_VERSION-pdo_mysql \
 	&& exit 0
 
+COPY --from=source /vendor ./vendor/
+
 COPY --from=source /stage /
 RUN cat /etc/php/$PHP_VERSION/www.conf.extra >> /etc/php/$PHP_VERSION/php-fpm.d/www.conf
-
-COPY --from=source /vendor ./vendor/
 COPY --from=source /app ./
