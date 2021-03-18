@@ -4,3 +4,4 @@
 !/php.ini
 !/nginx.conf
 !/php-fpm.conf
+!/eventum-*.tar.xz
