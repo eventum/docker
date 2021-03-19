@@ -3,6 +3,8 @@
 # https://github.com/eventum/eventum
 #
 
+ARG BUILDTYPE=download
+
 # base php version
 ARG PHP_VERSION=7.2
 FROM phpearth/php:$PHP_VERSION-nginx AS base
@@ -14,7 +16,7 @@ ENV PHP_VERSION $PHP_VERSION
 # PHP_INI_DIR to be symmetrical with official php docker image
 ENV PHP_INI_DIR /etc/php/$PHP_VERSION
 
-FROM base AS source
+FROM base AS source-download
 RUN apk add --no-cache curl
 
 # download and unpack code
@@ -24,6 +26,11 @@ RUN curl -fLS https://github.com/eventum/eventum/releases/download/v$VERSION/eve
 
 ARG CHECKSUM=9b03dd8b2d6008515736a073a30b855e5798bc95d10300b5c9bcab4ad5b98f40
 RUN sha256sum eventum.tar.xz && echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c -
+
+FROM base AS source-local
+COPY eventum-*.tar.xz /source/eventum.tar.xz
+
+FROM source-$BUILDTYPE AS source
 
 WORKDIR /app
 RUN tar --strip-components=1 -xf /source/eventum.tar.xz
