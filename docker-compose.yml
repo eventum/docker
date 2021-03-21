@@ -8,7 +8,7 @@ services:
       - ./var/cache:/app/var/cache
       - ./var/log:/app/var/log
       - ./var/log/nginx:/var/log/nginx
-      - ./var/log/fpm:/var/log/php/7.2
+      - ./var/log/fpm:/var/log/php7
       - ./var/lock:/app/var/lock
       - ./var/session:/app/var/session
       - ./var/storage:/app/var/storage

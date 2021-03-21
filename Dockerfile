@@ -5,16 +5,11 @@
 
 ARG BUILDTYPE=download
 
-# base php version
-ARG PHP_VERSION=7.2
-FROM phpearth/php:$PHP_VERSION-nginx AS base
+FROM alpine:3.12 AS base
+ENV PHP_VERSION 7.3
 
-ARG PHP_VERSION=7.2
-ENV PHP_VERSION $PHP_VERSION
-
-# temporarily until applied upstream: https://github.com/phpearth/docker-php/pull/34
 # PHP_INI_DIR to be symmetrical with official php docker image
-ENV PHP_INI_DIR /etc/php/$PHP_VERSION
+ENV PHP_INI_DIR /etc/php7
 
 FROM base AS source-download
 RUN apk add --no-cache curl
@@ -30,15 +25,28 @@ RUN sha256sum eventum.tar.xz && echo "$CHECKSUM *eventum.tar.xz" | sha256sum -c 
 FROM base AS source-local
 COPY eventum-*.tar.xz /source/eventum.tar.xz
 
+# Copy runit initscript from previous version
+FROM eventum/eventum:3.9.12 AS runit-base
+FROM base AS runit
+WORKDIR /runit
+COPY --from=runit-base /sbin/runit-wrapper ./sbin/runit-wrapper
+COPY --from=runit-base /sbin/runsvdir-start ./sbin/runsvdir-start
+COPY --from=runit-base /etc/service ./etc/service/
+
 FROM source-$BUILDTYPE AS source
+
+# Use www-data uid/gid, same as in docker php alpine images
+RUN addgroup -g 82 www-data
+RUN adduser -u 82 -D -S -G www-data www-data
 
 WORKDIR /app
 RUN tar --strip-components=1 -xf /source/eventum.tar.xz
 
 WORKDIR /stage
+COPY --from=runit /runit ./
 COPY php.ini ./$PHP_INI_DIR/php.ini
 COPY nginx.conf ./etc/nginx/conf.d/default.conf
-COPY php-fpm.conf ./etc/php/$PHP_VERSION/www.conf.extra
+COPY php-fpm.conf ./$PHP_INI_DIR/www.conf.extra
 COPY bin/entrypoint.sh ./eventum
 
 ARG DATE=2021-03-10
@@ -71,18 +79,35 @@ RUN set -x \
 FROM base
 WORKDIR /app
 ENTRYPOINT [ "/eventum" ]
+VOLUME [ "/run/nginx", "/run/php" ]
 
 RUN apk add --no-cache \
-	setpriv \
-	php$PHP_VERSION-gd \
-	php$PHP_VERSION-gettext \
-	php$PHP_VERSION-intl \
-	php$PHP_VERSION-ldap \
-	php$PHP_VERSION-pdo_mysql \
+		nginx \
+		php7-cli \
+		php7-ctype \
+		php7-dom \
+		php7-fpm \
+		php7-gd \
+		php7-gettext \
+		php7-intl \
+		php7-json \
+		php7-ldap \
+		php7-mbstring \
+		php7-pdo_mysql \
+		php7-session \
+		php7-tokenizer \
+		runit \
+		setpriv \
+	&& exit 0
+
+RUN set -x \
+	&& adduser -u 82 -D -S -G www-data www-data \
+	&& ln -s php-fpm7 /usr/sbin/php-fpm \
+	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log \
 	&& exit 0
 
 COPY --from=source /vendor ./vendor/
-
 COPY --from=source /stage /
-RUN cat /etc/php/$PHP_VERSION/www.conf.extra >> /etc/php/$PHP_VERSION/php-fpm.d/www.conf
+RUN cat $PHP_INI_DIR/www.conf.extra >> $PHP_INI_DIR/php-fpm.d/www.conf
 COPY --from=source /app ./
