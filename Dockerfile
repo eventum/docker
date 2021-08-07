@@ -110,6 +110,8 @@ RUN set -x \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
 	&& exit 0
 
+LABEL org.opencontainers.image.source "https://github.com/eventum/eventum"
+
 COPY --from=source /vendor ./vendor/
 COPY --from=source /stage /
 RUN cat $PHP_INI_DIR/www.conf.extra >> $PHP_INI_DIR/php-fpm.d/www.conf
